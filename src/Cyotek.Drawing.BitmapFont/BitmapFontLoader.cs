@@ -20,6 +20,32 @@ namespace Cyotek.Drawing.BitmapFont
   {
     #region Static Methods
 
+    public static BitmapFont LoadFontFromBinaryFile(string fileName)
+    {
+      BitmapFont font;
+
+      if (string.IsNullOrEmpty(fileName))
+      {
+        throw new ArgumentNullException("fileName");
+      }
+
+      if (!File.Exists(fileName))
+      {
+        throw new FileNotFoundException(string.Format("Cannot find file '{0}'", fileName), fileName);
+      }
+
+      font = new BitmapFont();
+
+      using (Stream stream = File.OpenRead(fileName))
+      {
+        font.LoadBinary(stream);
+      }
+
+      QualifyResourcePaths(font, Path.GetDirectoryName(fileName));
+
+      return font;
+    }
+
     /// <summary>
     /// Loads a bitmap font from a file, attempting to auto detect the file type
     /// </summary>
@@ -44,31 +70,34 @@ namespace Cyotek.Drawing.BitmapFont
         throw new FileNotFoundException(string.Format("Cannot find file '{0}'", fileName), fileName);
       }
 
-      using (FileStream file = File.OpenRead(fileName))
+      using (Stream stream = File.OpenRead(fileName))
       {
-        using (TextReader reader = new StreamReader(file))
+        byte[] buffer;
+
+        buffer = new byte[5];
+
+        stream.Read(buffer, 0, 5);
+
+        if (buffer[0] == 66 && buffer[1] == 77 && buffer[2] == 70 && buffer[3] == 3)
         {
-          string line;
-
-          line = reader.ReadLine();
-
-          if (line.StartsWith("info "))
-          {
-            result = LoadFontFromTextFile(fileName);
-          }
-          else if (line.StartsWith("<?xml"))
-          {
-            result = LoadFontFromXmlFile(fileName);
-          }
-          else
-          {
-            throw new InvalidDataException("Unknown file format.");
-          }
+          result = LoadFontFromBinaryFile(fileName);
+        }
+        else if (buffer[0] == 105 && buffer[1] == 110 && buffer[2] == 102 && buffer[3] == 111 && buffer[4] == 32)
+        {
+          result = LoadFontFromTextFile(fileName);
+        }
+        else if (buffer[0] == 60 && buffer[1] == 63 && buffer[2] == 120 && buffer[3] == 109 && buffer[4] == 108)
+        {
+          result = LoadFontFromXmlFile(fileName);
+        }
+        else
+        {
+          throw new InvalidDataException("Unknown file format.");
         }
       }
 
-      return result;
-    }
+        return result;
+      }
 
     /// <summary>
     /// Loads a bitmap font from a file containing font data in text format.
@@ -149,14 +178,15 @@ namespace Cyotek.Drawing.BitmapFont
     /// <returns></returns>
     internal static bool GetNamedBool(string[] parts, string name, bool defaultValue = false)
     {
-      var s = GetNamedString(parts, name);
+      string s = GetNamedString(parts, name);
 
       bool result;
       int v;
       if (int.TryParse(s, out v))
       {
         result = v > 0;
-      } else
+      }
+      else
       {
         result = defaultValue;
       }
@@ -173,7 +203,7 @@ namespace Cyotek.Drawing.BitmapFont
     /// <returns></returns>
     internal static int GetNamedInt(string[] parts, string name, int defaultValue = 0)
     {
-      var s = GetNamedString(parts, name);
+      string s = GetNamedString(parts, name);
 
       int result;
       if (!int.TryParse(s, out result))
@@ -241,12 +271,12 @@ namespace Cyotek.Drawing.BitmapFont
       parts = s.Split(',');
 
       return new Padding()
-             {
-               Left = Convert.ToInt32(parts[3].Trim()),
-               Top = Convert.ToInt32(parts[0].Trim()),
-               Right = Convert.ToInt32(parts[1].Trim()),
-               Bottom = Convert.ToInt32(parts[2].Trim())
-             };
+      {
+        Left = Convert.ToInt32(parts[3].Trim()),
+        Top = Convert.ToInt32(parts[0].Trim()),
+        Right = Convert.ToInt32(parts[1].Trim()),
+        Bottom = Convert.ToInt32(parts[2].Trim())
+      };
     }
 
     /// <summary>
@@ -261,10 +291,10 @@ namespace Cyotek.Drawing.BitmapFont
       parts = s.Split(',');
 
       return new Point()
-             {
-               X = Convert.ToInt32(parts[0].Trim()),
-               Y = Convert.ToInt32(parts[1].Trim())
-             };
+      {
+        X = Convert.ToInt32(parts[0].Trim()),
+        Y = Convert.ToInt32(parts[1].Trim())
+      };
     }
 
     /// <summary>

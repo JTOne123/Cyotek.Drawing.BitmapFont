@@ -6,7 +6,7 @@
  * Licensed under the MIT License. See LICENSE.txt for the full text.
  */
 
- using BenchmarkDotNet.Running;
+using BenchmarkDotNet.Running;
 
 namespace Benchmarks
 {
@@ -17,6 +17,10 @@ namespace Benchmarks
     static void Main(string[] args)
     {
       BenchmarkRunner.Run<LoaderBenchmarks>();
+      //new LoaderBenchmarks().LoadAuto();
+      //new LoaderBenchmarks().LoadBinary();
+      //new LoaderBenchmarks().LoadText();
+      //new LoaderBenchmarks().LoadXml();
     }
 
     #endregion

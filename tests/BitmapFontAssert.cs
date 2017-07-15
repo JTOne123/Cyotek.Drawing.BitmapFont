@@ -6,7 +6,7 @@
  * Licensed under the MIT License. See LICENSE.txt for the full text.
  */
 
- using System.Collections.Generic;
+using System.Collections.Generic;
 using NUnit.Framework;
 
 namespace Cyotek.Drawing.BitmapFont.Tests
@@ -48,8 +48,8 @@ namespace Cyotek.Drawing.BitmapFont.Tests
         Assert.AreEqual(expected.TextureSize, actual.TextureSize, nameof(BitmapFont.TextureSize) + " does not match.");
         Assert.AreEqual(expected.Unicode, actual.Unicode, nameof(BitmapFont.Unicode) + " does not match.");
 
-        AreEqual(expected.Characters, actual.Characters);
         AreEqual(expected.Pages, actual.Pages);
+        AreEqual(expected.Characters, actual.Characters);
         AreEqual(expected.Kernings, actual.Kernings);
       }
     }

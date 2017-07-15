@@ -65,18 +65,6 @@ namespace Cyotek.Drawing.BitmapFont
     #region Methods
 
     /// <summary>
-    /// Returns the fully qualified type name of this instance.
-    /// </summary>
-    /// <returns>
-    /// A <see cref="T:System.String" /> containing a fully qualified type name.
-    /// </returns>
-    /// <seealso cref="M:System.ValueType.ToString()"/>
-    public override string ToString()
-    {
-      return string.Format("{0} to {1} = {2}", this.FirstCharacter, this.SecondCharacter, this.Amount);
-    }
-    
-    /// <summary>
     /// Check if the object represents kerning between the same two characters.
     /// </summary>
     /// <param name="obj"></param>
@@ -85,22 +73,12 @@ namespace Cyotek.Drawing.BitmapFont
     /// </returns>
     public override bool Equals(object obj)
     {
-      if (obj == null) return false;
-      if (obj.GetType() != typeof(Kerning)) return false;
+      if (obj == null)
+        return false;
+      if (obj.GetType() != typeof(Kerning))
+        return false;
 
       return this.Equals((Kerning)obj);
-    }
-
-    /// <summary>
-    /// Check if the other kerning is between the same two characters.
-    /// </summary>
-    /// <param name="other"></param>
-    /// <returns>
-    /// Whether or not the other kerning is between the same two characters.
-    /// </returns>
-    public bool Equals(Kerning other)
-    {
-      return FirstCharacter == other.FirstCharacter && SecondCharacter == other.SecondCharacter;
     }
 
     /// <summary>
@@ -113,8 +91,36 @@ namespace Cyotek.Drawing.BitmapFont
     {
       unchecked
       {
-        return (FirstCharacter << 16) | SecondCharacter;
+        return (this.FirstCharacter << 16) | this.SecondCharacter;
       }
+    }
+
+    /// <summary>
+    /// Returns the fully qualified type name of this instance.
+    /// </summary>
+    /// <returns>
+    /// A <see cref="T:System.String" /> containing a fully qualified type name.
+    /// </returns>
+    /// <seealso cref="M:System.ValueType.ToString()"/>
+    public override string ToString()
+    {
+      return string.Format("{0} to {1} = {2}", this.FirstCharacter, this.SecondCharacter, this.Amount);
+    }
+
+    #endregion
+
+    #region IEquatable<Kerning> Interface
+
+    /// <summary>
+    /// Check if the other kerning is between the same two characters.
+    /// </summary>
+    /// <param name="other"></param>
+    /// <returns>
+    /// Whether or not the other kerning is between the same two characters.
+    /// </returns>
+    public bool Equals(Kerning other)
+    {
+      return this.FirstCharacter == other.FirstCharacter && this.SecondCharacter == other.SecondCharacter;
     }
 
     #endregion

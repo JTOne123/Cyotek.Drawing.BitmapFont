@@ -52,6 +52,7 @@
     <Compile Include="Padding.cs" />
     <Compile Include="Page.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="WordHelpers.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="cyopublic.snk" />

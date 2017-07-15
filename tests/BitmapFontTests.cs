@@ -6,7 +6,7 @@
  * Licensed under the MIT License. See LICENSE.txt for the full text.
  */
 
- using NUnit.Framework;
+using NUnit.Framework;
 
 namespace Cyotek.Drawing.BitmapFont.Tests
 {

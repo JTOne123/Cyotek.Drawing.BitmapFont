@@ -177,10 +177,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="data\arial-32bi.fnt">
+    <None Include="data\binary.fnt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Include="data\arial-32bi.xml.fnt">
+    <None Include="data\text.fnt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="data\xml.fnt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
