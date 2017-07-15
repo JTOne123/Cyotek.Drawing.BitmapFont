@@ -385,6 +385,7 @@ namespace Cyotek.Drawing.BitmapFont
       IDictionary<Kerning, int> kerningDictionary;
       IDictionary<char, Character> charDictionary;
       string line;
+      string[] parts;
 
       if (reader == null)
       {
@@ -394,6 +395,7 @@ namespace Cyotek.Drawing.BitmapFont
       pageData = new SortedDictionary<int, Page>();
       kerningDictionary = new Dictionary<Kerning, int>();
       charDictionary = new Dictionary<char, Character>();
+      parts=new string[13]; // the maximum number of fields on a single line;
 
       do
       {
@@ -401,9 +403,7 @@ namespace Cyotek.Drawing.BitmapFont
 
         if (line != null)
         {
-          string[] parts;
-
-          parts = BitmapFontLoader.Split(line, ' ');
+          BitmapFontLoader.Split(line, parts);
 
           if (parts.Length != 0)
           {

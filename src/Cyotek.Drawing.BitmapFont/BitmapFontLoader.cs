@@ -149,14 +149,15 @@ namespace Cyotek.Drawing.BitmapFont
     /// <returns></returns>
     internal static bool GetNamedBool(string[] parts, string name, bool defaultValue = false)
     {
-      var s = GetNamedString(parts, name);
+      string s = GetNamedString(parts, name);
 
       bool result;
       int v;
       if (int.TryParse(s, out v))
       {
         result = v > 0;
-      } else
+      }
+      else
       {
         result = defaultValue;
       }
@@ -173,7 +174,7 @@ namespace Cyotek.Drawing.BitmapFont
     /// <returns></returns>
     internal static int GetNamedInt(string[] parts, string name, int defaultValue = 0)
     {
-      var s = GetNamedString(parts, name);
+      string s = GetNamedString(parts, name);
 
       int result;
       if (!int.TryParse(s, out result))
@@ -196,23 +197,26 @@ namespace Cyotek.Drawing.BitmapFont
 
       result = string.Empty;
 
-      foreach (string part in parts)
+      for (int i = 0; i < parts.Length; i++)
       {
+        string part;
         int nameEndIndex;
 
+        part = parts[i];
         nameEndIndex = part.IndexOf('=');
+
         if (nameEndIndex != -1)
         {
           string namePart;
-          string valuePart;
 
           namePart = part.Substring(0, nameEndIndex);
-          valuePart = part.Substring(nameEndIndex + 1);
 
           if (string.Equals(name, namePart, StringComparison.InvariantCultureIgnoreCase))
           {
             int length;
+            string valuePart;
 
+            valuePart = part.Substring(nameEndIndex + 1);
             length = valuePart.Length;
 
             if (length > 1 && valuePart[0] == '"' && valuePart[length - 1] == '"')
@@ -236,16 +240,20 @@ namespace Cyotek.Drawing.BitmapFont
     /// <returns></returns>
     internal static Padding ParsePadding(string s)
     {
-      string[] parts;
+      int rStart;
+      int bStart;
+      int lStart;
 
-      parts = s.Split(',');
+      rStart = s.IndexOf(',');
+      bStart = s.IndexOf(',', rStart + 1);
+      lStart = s.IndexOf(',', bStart + 1);
 
-      return new Padding()
+      return new Padding
              {
-               Left = Convert.ToInt32(parts[3].Trim()),
-               Top = Convert.ToInt32(parts[0].Trim()),
-               Right = Convert.ToInt32(parts[1].Trim()),
-               Bottom = Convert.ToInt32(parts[2].Trim())
+               Left = int.Parse(s.Substring(lStart + 1)),
+               Top = int.Parse(s.Substring(0, rStart)),
+               Right = int.Parse(s.Substring(rStart + 1, bStart - rStart - 1)),
+               Bottom = int.Parse(s.Substring(bStart + 1, lStart - bStart - 1))
              };
     }
 
@@ -256,14 +264,14 @@ namespace Cyotek.Drawing.BitmapFont
     /// <returns></returns>
     internal static Point ParsePoint(string s)
     {
-      string[] parts;
+      int yStart;
 
-      parts = s.Split(',');
+      yStart = s.IndexOf(',');
 
-      return new Point()
+      return new Point
              {
-               X = Convert.ToInt32(parts[0].Trim()),
-               Y = Convert.ToInt32(parts[1].Trim())
+               X = int.Parse(s.Substring(0, yStart)),
+               Y = int.Parse(s.Substring(yStart + 1))
              };
     }
 
@@ -294,63 +302,55 @@ namespace Cyotek.Drawing.BitmapFont
     /// Splits the specified string using a given delimiter, ignoring any instances of the delimiter as part of a quoted string.
     /// </summary>
     /// <param name="s">The string to split.</param>
-    /// <param name="delimiter">The delimiter.</param>
+    /// <param name="buffer">The output buffer where split strings will be placed. Must be larged enough to handle the contents of <paramref name="s"/>.</param>
     /// <returns></returns>
-    internal static string[] Split(string s, char delimiter)
+    internal static void Split(string s, string[] buffer)
     {
-      string[] results;
+      int index;
+      int partStart;
+      char delimiter;
 
-      if (s.IndexOf('"') != -1)
+      delimiter = ' ';
+      partStart = -1;
+      index = 0;
+
+      do
       {
-        List<string> parts;
-        int partStart;
+        int partEnd;
+        int quoteStart;
+        int quoteEnd;
+        int length;
+        bool hasQuotes;
 
-        partStart = -1;
-        parts = new List<string>();
+        quoteStart = s.IndexOf('"', partStart + 1);
+        quoteEnd = s.IndexOf('"', quoteStart + 1);
+        partEnd = s.IndexOf(delimiter, partStart + 1);
 
-        do
+        if (partEnd == -1)
         {
-          int partEnd;
-          int quoteStart;
-          int quoteEnd;
-          bool hasQuotes;
+          partEnd = s.Length;
+        }
 
-          quoteStart = s.IndexOf('"', partStart + 1);
-          quoteEnd = s.IndexOf('"', quoteStart + 1);
-          partEnd = s.IndexOf(delimiter, partStart + 1);
+        hasQuotes = quoteStart != -1 && partEnd > quoteStart && partEnd < quoteEnd;
+        if (hasQuotes)
+        {
+          partEnd = s.IndexOf(delimiter, quoteEnd + 1);
+        }
 
-          if (partEnd == -1)
-          {
-            partEnd = s.Length;
-          }
+        length = partEnd - partStart - 1;
+        if (length > 0)
+        {
+          buffer[index] = s.Substring(partStart + 1, length);
+          index++;
+        }
 
-          hasQuotes = quoteStart != -1 && partEnd > quoteStart && partEnd < quoteEnd;
-          if (hasQuotes)
-          {
-            partEnd = s.IndexOf(delimiter, quoteEnd + 1);
-          }
+        if (hasQuotes)
+        {
+          partStart = partEnd - 1;
+        }
 
-          parts.Add(s.Substring(partStart + 1, partEnd - partStart - 1));
-
-          if (hasQuotes)
-          {
-            partStart = partEnd - 1;
-          }
-
-          partStart = s.IndexOf(delimiter, partStart + 1);
-        } while (partStart != -1);
-
-        results = parts.ToArray();
-      }
-      else
-      {
-        results = s.Split(new char[]
-                          {
-                            delimiter
-                          }, StringSplitOptions.RemoveEmptyEntries);
-      }
-
-      return results;
+        partStart = s.IndexOf(delimiter, partStart + 1);
+      } while (partStart != -1);
     }
 
     /// <summary>

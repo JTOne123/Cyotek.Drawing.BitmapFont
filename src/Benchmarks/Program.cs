@@ -6,7 +6,7 @@
  * Licensed under the MIT License. See LICENSE.txt for the full text.
  */
 
- using BenchmarkDotNet.Running;
+using BenchmarkDotNet.Running;
 
 namespace Benchmarks
 {

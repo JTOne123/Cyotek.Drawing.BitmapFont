@@ -6,7 +6,7 @@
  * Licensed under the MIT License. See LICENSE.txt for the full text.
  */
 
- using System;
+using System;
 using System.IO;
 using BenchmarkDotNet.Attributes;
 using Cyotek.Drawing.BitmapFont;
@@ -22,6 +22,10 @@ namespace Benchmarks
 
     private readonly string _textFileName;
 
+    private readonly V1TextLoader _v1TextLoader;
+
+    private readonly V1XmlLoader _v1XmlLoader;
+
     private readonly string _xmlFileName;
 
     #endregion
@@ -35,6 +39,8 @@ namespace Benchmarks
       path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "data");
       _textFileName = Path.Combine(path, "arial-32bi.fnt");
       _xmlFileName = Path.Combine(path, "arial-32bi.xml.fnt");
+      _v1TextLoader = new V1TextLoader();
+      _v1XmlLoader = new V1XmlLoader();
     }
 
     #endregion
@@ -57,6 +63,18 @@ namespace Benchmarks
     public BitmapFont LoadXml()
     {
       return BitmapFontLoader.LoadFontFromXmlFile(_xmlFileName);
+    }
+
+    [Benchmark]
+    public BitmapFont V1LoadText()
+    {
+      return _v1TextLoader.Load(_textFileName);
+    }
+
+    [Benchmark]
+    public BitmapFont V1LoadXml()
+    {
+      return _v1XmlLoader.Load(_xmlFileName);
     }
 
     #endregion
