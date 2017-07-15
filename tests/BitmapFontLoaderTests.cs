@@ -6,7 +6,8 @@
  * Licensed under the MIT License. See LICENSE.txt for the full text.
  */
 
- using NUnit.Framework;
+using System.Drawing;
+using NUnit.Framework;
 
 namespace Cyotek.Drawing.BitmapFont.Tests
 {
@@ -51,6 +52,46 @@ namespace Cyotek.Drawing.BitmapFont.Tests
       // assert
       BitmapFontAssert.AreEqual(expected, actual);
     }
+
+    [Test]
+    public void ParsePointTest()
+    {
+      // arrange
+      string value;
+      Point expected;
+      Point actual;
+
+      expected = new Point(12, 34);
+
+      value = "12,34";
+
+      // act
+      actual = BitmapFontLoader.ParsePoint(value);
+
+      // assert
+      Assert.AreEqual(expected, actual);
+    }
+
+    [Test]
+    public void ParsePaddingTest()
+    {
+      // arrange
+      string value;
+      Padding expected;
+      Padding actual;
+
+      expected = new Padding(12, 34, 45, 67);
+
+      value = "34,45,67,12";
+
+      // act
+      actual = BitmapFontLoader.ParsePadding(value);
+
+      // assert
+      Assert.AreEqual(expected, actual);
+    }
+
+
 
     #endregion
   }
